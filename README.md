@@ -11,17 +11,10 @@ The logs of the SSH accesses into the bastion are stored in the configured PV.
 
 ## Installation
 
-1. Add the Helm chart repository:
+1. Install the SSH Bastion Server chart from latest release:
 
 ```bash
-   helm repo add ssh-bastion <repository-url>
-   helm repo update
-```
-
-2. Install the SSH Bastion Server chart:
-
-```bash
-   helm install my-ssh-bastion ssh-bastion/ssh-bastion
+   helm install my-ssh-bastion https://github.com/alcidesmig/helm-ssh-bastion/releases/download/0.1.0/ssh-bastion-0.1.0.tgz
 ```
 
 ## Configuration

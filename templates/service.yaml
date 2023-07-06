@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ssh-bastion.fullname" . }}
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 22
+      protocol: TCP
+      name: ssh
+  selector:
+    {{- include "ssh-bastion.selectorLabels" . | nindent 4 }}

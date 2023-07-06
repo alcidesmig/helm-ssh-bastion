@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ssh-config-configmap
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+data:
+  keys: |
+    {{- range $key, $value := .Values.sshConfig.authorizedKeys }}
+    {{ $key }} {{ $value }}
+    {{- end }}
+  ssh-config.sh: |
+    #!/bin/bash
+    set -e
+
+    apt update 1> /tmp/out
+    apt install -y openssh-server 1> /tmp/out
+    ssh-keygen -A
+    mkdir -p /run/sshd
+
+    # Create users and configure SSH keys
+    while read -r username ssh_key; do
+      # Create user
+      adduser --disabled-password --gecos "" "$username"
+
+      # Configure SSH keys
+      mkdir -p "/home/$username/.ssh"
+      echo "$ssh_key" >> "/home/$username/.ssh/authorized_keys"
+      chown -R "$username:$username" "/home/$username/.ssh"
+      chmod 700 "/home/$username/.ssh"
+      chmod 600 "/home/$username/.ssh/authorized_keys"
+
+      echo "User $username created with SSH key"
+    done < /etc/ssh/keys
+
+    timestamp=$(date +%s)
+    # Start SSH server
+    exec /usr/sbin/sshd -E /var/log/ssh_logs_$timestamp -D
+  sshd_config: |
+    SyslogFacility AUTH

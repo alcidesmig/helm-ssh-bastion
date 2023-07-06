@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ssh-bastion.fullname" . }}
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ssh-bastion.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ssh-bastion.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ssh-bastion.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ssh-bastion
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            {{- if .Values.logs.enabled }}
+            - name: ssh-connections
+              mountPath: /var/log
+            {{- end }}
+            - name: ssh-config
+              mountPath: /etc/ssh/keys
+              subPath: keys
+            - name: ssh-config
+              mountPath: /etc/ssh/ssh-config.sh
+              subPath: ssh-config.sh
+            - name: ssh-config
+              mountPath: /etc/ssh/sshd_config
+              subPath: sshd_config
+          command:
+            - bash
+            - /etc/ssh/ssh-config.sh
+      volumes:
+        {{- if .Values.logs.enabled }}
+        - name: ssh-connections
+          persistentVolumeClaim:
+            claimName: ssh-bastion-pvc
+        {{- end }}
+        - name: ssh-config
+          configMap:
+            name: ssh-config-configmap

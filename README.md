@@ -37,11 +37,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument during i
 
 You can specify the SSH authorized keys by modifying the `values.yaml` file. Add or remove entries in the `sshConfig.authorizedKeys` section, following the given format:
 
+```yaml
 sshConfig:
   authorizedKeys:
     username1: ssh-rsa <public-key>
     username2: ssh-rsa <public-key>
     ...
+```
 
 ## Accessing the SSH Bastion Server
 

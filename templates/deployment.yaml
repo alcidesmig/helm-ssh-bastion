@@ -40,9 +40,25 @@ spec:
           ports:
             - containerPort: 22
           volumeMounts:
-            {{- if .Values.logs.enabled }}
-            - name: ssh-connections
-              mountPath: /var/log
+            {{- if not .Values.hostKeys.autoGenerate }}
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_ecdsa_key
+              subPath: "ssh_host_ecdsa_key"
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_ecdsa_key.pub
+              subPath: "ssh_host_ecdsa_key.pub"
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_ed25519_key
+              subPath: "ssh_host_ed25519_key"
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_ed25519_key.pub
+              subPath: "ssh_host_ed25519_key.pub"
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_rsa_key
+              subPath: "ssh_host_rsa_key"
+            - name: host-keys
+              mountPath: /etc/ssh/ssh_host_rsa_key.pub
+              subPath: "ssh_host_rsa_key.pub"
             {{- end }}
             - name: ssh-config
               mountPath: /etc/ssh/keys
@@ -57,10 +73,11 @@ spec:
             - bash
             - /etc/ssh/ssh-config.sh
       volumes:
-        {{- if .Values.logs.enabled }}
-        - name: ssh-connections
-          persistentVolumeClaim:
-            claimName: ssh-bastion-pvc
+        {{- if not .Values.hostKeys.autoGenerate }}
+        - name: host-keys
+          secret:
+            secretName: {{ include "ssh-bastion.fullname" . }}-secret
+            defaultMode: 0400
         {{- end }}
         - name: ssh-config
           configMap:

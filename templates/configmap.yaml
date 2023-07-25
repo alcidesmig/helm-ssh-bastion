@@ -15,7 +15,11 @@ data:
 
     apt update 1> /tmp/out
     apt install -y openssh-server curl 1> /tmp/out
+
+    {{ if .Values.hostKeys.autoGenerate }}
     ssh-keygen -A
+    {{ end }}
+
     mkdir -p /run/sshd
 
     # Create users and configure SSH keys
@@ -33,8 +37,7 @@ data:
       echo "User $username created with SSH key"
     done < /etc/ssh/keys
 
-    timestamp=$(date +%s)
     # Start SSH server
-    exec /usr/sbin/sshd -E /var/log/ssh_logs_$timestamp -D
+    exec /usr/sbin/sshd -e -D
   sshd_config: |
     SyslogFacility AUTH

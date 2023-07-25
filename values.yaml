@@ -8,12 +8,6 @@ sshConfig:
   authorizedKeys: {}
     # alcides: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjYENeor3OYyPxxz4wac7trH6NUkhOufFhZ5X6E2OajF0lEGKwMlT1FoCLtrkyHUKtuyHpr0SGNChebmdBKJmFTUcPWMLCqMLXXDXwNE//G5HpYnDqWxUqEJ6uXbRJldoztWkCBxaExSEqPRtrEZ7m8dvtb2WqA4CdOBIAzvODzUwADz3o+t1fzVcdB5nFiblqmFHinBqgxK4azF1ucnytW2WS5u10Lpwb02nOs8peOZ261UvYsjkZ9MSCSpSVecEg5kHN7iBxIdSUn+yg/yLnJdhh0nF2/+LczlD1dVGJbaHSAb3N2GjMG+BKDa1AxH8JAIwkOLYMvnFIO8IhuUzV
 
-logs:
-  enabled: true
-  storageClassName: csi-cinder-default
-  size: "10Gi"
-
-
 image:
   repository: ubuntu
   pullPolicy: IfNotPresent
@@ -74,3 +68,14 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+hostKeys:
+  autoGenerate: true
+  ssh_host_dsa_key: ""
+  ssh_host_dsa_key_pub: ""
+  ssh_host_ecdsa_key: ""
+  ssh_host_ecdsa_key_pub: ""
+  ssh_host_ed25519_key: ""
+  ssh_host_ed25519_key_pub: ""
+  ssh_host_rsa_key: ""
+  ssh_host_rsa_key_pub: ""

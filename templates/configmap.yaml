@@ -14,7 +14,7 @@ data:
     set -e
 
     apt update 1> /tmp/out
-    apt install -y openssh-server 1> /tmp/out
+    apt install -y openssh-server curl 1> /tmp/out
     ssh-keygen -A
     mkdir -p /run/sshd
 

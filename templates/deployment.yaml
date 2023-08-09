@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: {{ include "ssh-bastion.fullname" . }}
   labels:
+    {{- range $key, $value := .Values.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
     {{- include "ssh-bastion.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -16,6 +19,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        {{- range $key, $value := .Values.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
         {{- include "ssh-bastion.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.tolerations }}

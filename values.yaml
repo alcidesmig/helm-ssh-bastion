@@ -14,6 +14,9 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: 22.04
 
+labels:
+  app: ssh-bastion
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

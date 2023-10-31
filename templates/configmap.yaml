@@ -41,3 +41,6 @@ data:
     exec /usr/sbin/sshd -e -D
   sshd_config: |
     SyslogFacility AUTH
+    {{- range $key, $value := .Values.sshdConfig.options }}
+    {{ $key }} {{ $value }}
+    {{- end }}
